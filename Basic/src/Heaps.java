@@ -2,6 +2,7 @@ import java.util.*;
 
 public class Heaps {
     public void run(){
+        
         // //1. IPO
         // int[] c = { 1, 2, 1, 7, 2 };
 		// int[] k = { 2, 3, 3, 2, 4 };
@@ -125,8 +126,54 @@ public class Heaps {
         //     System.out.println(new String(new char[100]).replace('\0', '-'));
         // }
 
-        //8. Longest happy string
-        
+        // //9. Longest happy string
+        // int[][] testCases = {
+        //     {1, 1, 7},
+        //     {2, 2, 1},
+        //     {7, 2, 0},
+        //     {0, 0, 0},
+        //     {10, 5, 3},
+        //     {3, 3, 3}
+        // };
+        // int testCaseNum = 1;
+        // for (int[] testCase : testCases) {
+        //     int a = testCase[0], b = testCase[1], c = testCase[2];
+        //     System.out.println(testCaseNum++ + ".\t a: " + a + ", b: " + b + ", c: " + c);
+        //     String result = longestDiverseString(a, b, c);
+        //     System.out.println("\n\t Longest Happy String: " + result);
+        //     System.out.println(new String(new char[100]).replace("\0", "-"));
+        // }
+    
+        // //10. Maximum Average Pass Ratio
+        // int[][][] classes = {
+        //     {{1, 2}, {3, 5}, {2, 2}},  
+        //     {{2, 4}, {3, 9}, {4, 5}, {2, 10}},  
+        //     {{1, 3}, {2, 4}, {3, 6}},  
+        //     {{5, 10}, {2, 3}, {3, 7}, {4, 8}},  
+        //     {{10, 20}, {5, 5}, {8, 12}, {6, 15}}  
+        // };
+        // int[] extra_students = {2, 4, 3, 5, 3};
+        // for (int i = 0; i < classes.length; i++) {
+        //     System.out.println("\textraStudents: " + extra_students[i]);
+        //     double result = maxAverageRatio(classes[i], extra_students[i]);
+        //     System.out.println("\n\tFinal Average Pass Ratio: " + result);
+        //     System.out.println(new String(new char[100]).replace('\0', '-'));
+        // }
+
+        // //11. Smallest Chair
+        // int[][][] testCases = {
+        //     {{3, 6}, {1, 6}, {4, 5}, {2, 4}, {5, 7}},
+        //     {{3, 5}, {2, 6}, {1, 7}},
+        //     {{5, 10}, {2, 3}, {3, 8}, {1, 6}},
+        //     {{1, 2}, {2, 3}, {3, 4}, {4, 5}},
+        //     {{1, 10}, {2, 3}, {3, 4}, {4, 5}, {5, 6}}
+        // };
+        // int[] targetFriends = {4, 0, 3, 2, 4};
+        // for (int i = 0; i < testCases.length; i++) {
+        //     int result = smallestChair(testCases[i], targetFriends[i]);
+        //     System.out.println((i + 1) + ".\t Times: " + "Chair number: " + result);
+        //     System.out.println(new String(new char[100]).replace('\0', '-'));
+        // }
     }
 
     public static int maximumCapital(int c, int k, int[] capitals,int[] profits) {
@@ -216,19 +263,18 @@ public class Heaps {
         }
         
         public static void addAndBalance(int i){
-      leftMax.offer(i);
-      rightMin.offer(leftMax.poll());
-      
-      if(rightMin.size() > leftMax.size()){
-         leftMax.offer(rightMin.poll());
-      }
-   }
+            leftMax.offer(i);
+            rightMin.offer(leftMax.poll());
+            
+            if(rightMin.size() > leftMax.size()){
+                leftMax.offer(rightMin.poll());
+            }
+        }
     }
 
     public static int minimumMachines(int[][] tasks) {
-      
-        // Replace this placeholder return statement with your code
-        Arrays.sort(tasks, (a, b) -> a[0]-b[0]);
+        // Fix: Use Arrays.sort with Comparator for int[][]
+        java.util.Arrays.sort(tasks, java.util.Comparator.comparingInt(a -> a[0]));
         PriorityQueue<Integer> pq = new PriorityQueue<>();
         for(int[] task : tasks){
             int start = task[0], end = task[1];
@@ -252,7 +298,7 @@ public class Heaps {
             availableRooms.offer(i);
         }
         
-        Arrays.sort(meetings, Comparator.comparingInt(a -> a[0]));
+        java.util.Arrays.sort(meetings, Comparator.comparingInt(a -> a[0]));
         
         for(int[] meet : meetings){
             int start = meet[0], end = meet[1];
@@ -319,7 +365,7 @@ public class Heaps {
             (a, b) -> a[0] != b[0] ? a[0] - b[0] : a[1] - b[1]);
             
         int[] result = new int[intervals.length];
-        Arrays.fill(result, -1);
+        java.util.Arrays.fill(result, -1);
         
         for(int i = 0; i < intervals.length; i++){
             startTimes.offer(new int[]{intervals[i][0], i});
@@ -359,5 +405,108 @@ public class Heaps {
         return totalCost;
     }
 
+    public static String longestDiverseString(int a,  int b, int c) 
+    {
+        // Replace this placeholder return statement with your code
+        StringBuilder result = new StringBuilder();
+        //{char(0-a, 1-b, 2-c), count}
+        PriorityQueue<int[]> pq = new PriorityQueue<>(
+            (x, y) -> y[1] - x[1]
+        );
+        
+        if(a != 0) pq.offer(new int[]{0, a});
+        if(b != 0) pq.offer(new int[]{1, b});
+        if(c != 0) pq.offer(new int[]{2, c});
+        
+        while(!pq.isEmpty()){
+            int[] top = pq.poll();
+            char topCh = (char)(top[0] + 97);
+            
+            int len = result.length();
+            if(len >= 2 && result.charAt(len - 1) == topCh && result.charAt(len - 2) == topCh){
+                if(pq.isEmpty()) break;
+                int[] next = pq.poll();
+                char nextCh = (char)(next[0] + 97);
+                result.append(nextCh);
+                if(--next[1] > 0){
+                    pq.offer(next);
+                }
+                pq.offer(top);
+            }
+            else{
+                result.append(topCh);
+                if(--top[1] > 0){
+                    pq.offer(top);
+                }
+            }
+        }
+        return result.toString();
+    }
+
+    public static double maxAverageRatio(int[][] classes, int extraStudents) {
+        // {potentialGain, num, den}
+        PriorityQueue<double[]> maxHeap = new PriorityQueue<double[]>((a, b) -> Double.compare(b[0], a[0]));
+        for(int[] c : classes){
+          double gain = getGain(c[0], c[1]);
+          maxHeap.offer(new double[]{gain, c[0], c[1]});
+        }
+        while(extraStudents > 0){
+            double[] top = maxHeap.poll();
+            int passes = (int) top[1] + 1;
+            int total = (int) top[2] + 1;
+            maxHeap.offer(new double[]{getGain(passes, total), passes, total});
+            extraStudents--;
+        }
+        double result = 0.0;
+        while(!maxHeap.isEmpty()){
+          double[] top = maxHeap.poll();
+          double ratio = top[1]/top[2];
+          result += ratio;
+        }
+        return result/classes.length;
+    }
+    
+    public static double getGain(int passes, int total) {
+        return ((double) (passes + 1) / (total + 1)) - ((double) passes / total);
+    }
+    
+    public static int smallestChair(int[][] times, int targetFriend) {
+        List<int[]> sortedFriends = new ArrayList<>();
+        for (int i = 0; i < times.length; i++) {
+            sortedFriends.add(new int[]{i, times[i][0], times[i][1]});
+        }
+        sortedFriends.sort(Comparator.comparingInt(a -> a[1]));
+
+        PriorityQueue<Integer> availableChairs = new PriorityQueue<>(); 
+        PriorityQueue<int[]> occupiedChairs = new PriorityQueue<>(Comparator.comparingInt(a -> a[0])); 
+
+        int chairIndex = 0;
+
+        for (int[] friendData : sortedFriends) {
+            int friendId = friendData[0];
+            int arrival = friendData[1];
+            int leaving = friendData[2];
+
+            while (!occupiedChairs.isEmpty() && occupiedChairs.peek()[0] <= arrival) {
+                int freedChair = occupiedChairs.poll()[1];
+                availableChairs.offer(freedChair); 
+            }
+
+            int assignedChair;
+            if (!availableChairs.isEmpty()) {
+                assignedChair = availableChairs.poll();
+            } else {
+                assignedChair = chairIndex; 
+                chairIndex++; 
+            }
+
+            occupiedChairs.offer(new int[]{leaving, assignedChair});
+
+            if (friendId == targetFriend) {
+                return assignedChair;
+            }
+        }
+        return -1;
+    }
 
 }

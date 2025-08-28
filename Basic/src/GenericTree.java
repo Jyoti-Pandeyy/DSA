@@ -154,7 +154,7 @@ public class GenericTree {
     }
 
     public static void levelOrderLinewiseTraversal2(Node node){
-        List<Node> parent = new LinkedList<>();
+        List<Node> parent = new java.util.LinkedList<>();
         parent.add(node);
         Node nullNode = null;
         parent.add(nullNode);
