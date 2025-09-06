@@ -49,7 +49,29 @@ public class Subsets {
 		// 	System.out.println(new String(new char[100]).replace('\0', '-'));
 		// }
 
-        //5. 
+        // //5. Letter case permutation
+        // String[] strings = {"a1b2", "3z4", "ABC", "123", "xYz"}; 
+        // for (int i = 0; i < strings.length; i++) {
+        //     System.out.println((i + 1) + ".\ts: \"" + strings[i] + "\"");
+        //     List<String> output = letterCasePermutation(strings[i]);
+        //     System.out.print("\n\tOutput: [");
+        //     for (int j = 0; j < output.size(); j++) {
+        //         System.out.print("\"" + output.get(j) + "\"");
+        //         if (j < output.size() - 1) System.out.print(", ");
+        //     }
+        //     System.out.println("]");
+        //     System.out.println(new String(new char[100]).replace('\0', '-'));
+        // }
+    
+        // //6. Letter Tile Combinations
+        // String[] testCases = {"AAB", "ABC", "AAABBC", "CDB", "ZZZ"};
+        // for (int i = 0; i < testCases.length; i++) {
+        //     System.out.println((i + 1) + ".\tTiles: \"" + testCases[i] + "\"");
+        //     System.out.println("\n\tOutput: " + numTilePossibilities(testCases[i]));
+        //     System.out.println("-" + new String(new char[100]).replace('\0', '-') + "\n");
+        // }
+    
+        //7. 
     }
 
     public static List<List<Integer>> subsetsUsingBitmask(int[] nums) {
@@ -86,13 +108,13 @@ public class Subsets {
         return setsList;
     }
 
-    // public static ArrayList<String> permuteWord(String word) {
-    //     ArrayList<String> result = new ArrayList<>();
-    //     permuteHelper(word.toCharArray(), 0, result);
-    //     return result;
-    // }
-    
     public static ArrayList<String> permuteWord(String word) {
+        ArrayList<String> result = new ArrayList<>();
+        permuteHelper(word.toCharArray(), 0, result);
+        return result;
+    }
+    
+    public static ArrayList<String> permuteWord2(String word) {
         ArrayList<String> result = new ArrayList<>();
         int n = word.length();
         result.add(word);
@@ -210,5 +232,137 @@ public class Subsets {
 	    }
 	}
 
+    public List<String> letterCasePermutation(String s) 
+    {
+        // Replace this placeholder return statement with your code
+        return letterCaseHelper(s, 0);
+    }
     
+    public List<String> letterCaseHelper(String s, int idx){
+        if(idx == s.length()){
+            List<String> res = new ArrayList<>();
+            res.add("");
+            return res;
+        }
+        
+        List<String> nRes = letterCaseHelper(s, idx+1);
+        char ch = s.charAt(idx);
+        boolean isCharacter = Character.isLetter(ch) ? true : false;
+        List<String> mRes = new ArrayList<String>();
+        for(String nStr : nRes){
+            if(isCharacter){
+                mRes.add(Character.toUpperCase(ch) + nStr);
+                mRes.add(Character.toLowerCase(ch) + nStr);
+            }
+            else{
+                mRes.add(ch + nStr);
+            }
+        }
+        return mRes;
+    }
+    
+    public static int numTilePossibilities(String tiles) {
+        char[] arr = tiles.toCharArray();
+        Arrays.sort(arr);
+        Set<String> uniqueTileComb = tilePossibilitiesHelper(arr, 0);
+        return uniqueTileComb.size() - 1;
+    }
+
+    public static Set<String> tilePossibilitiesHelper(char[] arr, int idx){
+        if(idx == arr.length){
+            Set<String> res = new HashSet<>();
+            res.add("");
+            return res;
+        }
+        
+        char ch = arr[idx];
+        Set<String> restTileComb = tilePossibilitiesHelper(arr, idx+1);
+        Set<String> tileComb = new HashSet<>(restTileComb);
+        for(String comb : restTileComb){
+            int len = comb.length();
+            for(int i = 0; i <= len; i++){
+                String str = comb.substring(0, i) + ch + comb.substring(i);
+                tileComb.add(str);
+            }
+        }
+        return tileComb;
+    }
+
+    public static int factorial(int n) {
+        if (n <= 1) return 1;
+
+        int result = 1;
+        for (int num = 2; num <= n; num++) {
+            result *= num;
+        }
+        return result;
+    }
+
+    public static int countPermutations(String sequence) {
+        int permutations = factorial(sequence.length());
+        Map<Character, Integer> frequency = new HashMap<>();
+
+        for (char ch : sequence.toCharArray()) {
+            frequency.put(ch, frequency.getOrDefault(ch, 0) + 1);
+        }
+
+        int divisor = 1;
+        for (int count : frequency.values()) {
+            divisor *= factorial(count);
+        }
+
+        return permutations / divisor;
+    }
+
+    public static int generateSequences(String tiles, String currentLetterSet, int index, Set<String> uniqueLetterSets) {
+        if (index >= tiles.length()) {
+            if (!uniqueLetterSets.contains(currentLetterSet)) {
+                uniqueLetterSets.add(currentLetterSet);
+                return countPermutations(currentLetterSet);
+            }
+            return 0;
+        }
+
+        int withoutLetter = generateSequences(tiles, currentLetterSet, index + 1, uniqueLetterSets);
+        int withLetter = generateSequences(tiles, currentLetterSet + tiles.charAt(index), index + 1, uniqueLetterSets);
+
+        return withoutLetter + withLetter;
+    }
+
+    public static int numTilePossibilities2(String tiles) {
+        Set<String> uniqueLetterSets = new HashSet<>();
+
+        char[] tileArray = tiles.toCharArray();
+        Arrays.sort(tileArray);
+        String sortedTiles = new String(tileArray);
+
+        int output = generateSequences(sortedTiles, "", 0, uniqueLetterSets);
+        return output - 1;
+    }
+
+    static List<List<Integer>> kSumSubsets;
+    public static List<List<Integer>> getKSumSubsets(int[] nums, int k) {
+      // Replace this placeholder return statement with your code
+      Arrays.sort(nums);
+      kSumSubsets = new ArrayList<>();
+      getKSumSubsetsHelper(nums, 0, k, new ArrayList<Integer>());
+      return kSumSubsets;
+    }
+    
+    public static void getKSumSubsetsHelper(int[] nums, int idx, int sum, List<Integer> subsetSoFar){
+        if(sum == 0){
+            kSumSubsets.add(new ArrayList<>(subsetSoFar));
+            return;
+        }
+        if(idx == nums.length){
+            return;
+        }
+        
+        getKSumSubsetsHelper(nums, idx+1, sum, subsetSoFar);
+        if(nums[idx] <= sum){
+            subsetSoFar.add(nums[idx]);
+            getKSumSubsetsHelper(nums, idx+1, sum - nums[idx], subsetSoFar);
+            subsetSoFar.remove(subsetSoFar.size()-1);
+        }
+    }
 }
