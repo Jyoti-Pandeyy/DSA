@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.PriorityQueue;
 
 public class Greedy {
     public void run(){
@@ -71,7 +72,34 @@ public class Greedy {
         //     System.out.println(new String(new char[100]).replace('\0', '-'));
         // }
 
-        //5. 
+        // //5. Minimum Refuel Stops
+        // int[] target = {120, 15, 570, 1360};
+        // int[] startFuel = {10, 3, 140, 380};
+        // int[][][] stations = {
+        //                     {{10, 60},{20, 25},{30, 30},{60, 40}},
+        //                     {{2, 5},{3, 1},{6, 3},{12,6 }},
+        //                     {{140, 200}, {160, 130}, {310, 200}, {330, 250}},
+        //                     {{310, 160}, {380, 620}, {700, 89}, {850, 190}, {990, 360}}
+        //                     };
+        // for(int i=0;i<target.length;i++){
+        //     System.out.print(i+1);
+        //     System.out.println(".\tStations: "+Arrays.deepToString(stations[i]));
+        //     System.out.println("\tTarget fuel: "+target[i]);
+        //     System.out.println("\tStart fuel: "+startFuel[i]);
+        //     System.out.println("\tMinimum number of Refueling stops: "+minRefuelStops(target[i], startFuel[i],stations[i]));
+        //     System.out.println(new String(new char[100]).replace('\0', '-'));
+        // }
+
+        // //6. Largest Palindrome
+        // String[] numbers = {"00001", "1234287", "9876545367282", "000000", "146"};
+        // for (int i = 0; i < numbers.length; i++) {
+        //     System.out.println((i + 1) + ".\tGiven number: \"" + numbers[i] + "\"");
+        //     String result = largestPalindrome(numbers[i]);
+        //     System.out.println("\n\tThe largest palindromic number: \"" + result + "\"");
+        //     System.out.println(new String(new char[100]).replace('\0', '-'));
+        // }
+
+        //7. Assign Cookies
 
     }  
 
@@ -170,6 +198,67 @@ public class Greedy {
             i++;
         }
         return totalCost;
+    }
+
+    public static int minRefuelStops(int target, int startFuel, int[][] stations) {
+        if(startFuel >= target){
+            return 0;
+        }
+        int stops = 0;
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>((a, b) -> b-a);
+        int i = 0;
+        while(startFuel < target){
+            if(i < stations.length && stations[i][0] <= startFuel){
+                maxHeap.add(stations[i][1]);
+                i++;
+            }
+            else if(maxHeap.isEmpty()){
+                return -1;
+            }
+            else{
+                startFuel += maxHeap.poll();
+                stops++;
+            }
+        }
+        return stops;
+    }
+
+    public static String largestPalindrome(String num) {
+        int[] count = new int[10];
+        for(char ch : num.toCharArray()){
+            int idx = ch -'0';
+            count[idx]++;
+        }
+        StringBuilder sb = new StringBuilder();
+        int largestOdd = -1;
+        for(int i = 9; i >= 0; i--){
+            if(count[i] == 0){
+                continue;
+            }
+            if(i == 0 && sb.isEmpty()){
+                count[i] = 1;
+            }
+            int numPairs = count[i] / 2;
+            for(int j = 0; j < numPairs; j++){
+                sb.append(i);
+            }
+            if(count[i] % 2 == 1 && largestOdd == -1){
+                largestOdd = i;
+            }
+        }
+        
+        if(sb.isEmpty()){
+            if(largestOdd != -1){
+                sb.append(largestOdd);
+                return sb.toString();
+            }
+        }
+        else{
+            StringBuilder secondHalf = new StringBuilder(sb);
+            if(largestOdd != -1) sb.append(largestOdd);
+            return sb.append(secondHalf.reverse().toString()).toString();
+        }
+        return "";
     }
 
 
