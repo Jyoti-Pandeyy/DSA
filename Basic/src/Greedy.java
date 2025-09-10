@@ -1,5 +1,5 @@
+import java.util.*;
 import java.util.Arrays;
-import java.util.PriorityQueue;
 
 public class Greedy {
     public void run(){
@@ -99,8 +99,70 @@ public class Greedy {
         //     System.out.println(new String(new char[100]).replace('\0', '-'));
         // }
 
-        //7. Assign Cookies
+        // //7. Assign Cookies
+        // int[][] greedFactors = {
+        //     {1, 2, 3},
+        //     {10, 20, 30, 40 ,50 ,60 ,70, 80},
+        //     {3, 4, 5, 6, 7, 8},
+        //     {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
+        //     {10, 9, 8, 7},
+        //     {1000, 996, 867, 345, 23, 12}
+        // };
+        // int[][] cookieSizes = {
+        //     {1, 1},
+        //     {10, 20, 30, 40 ,50 ,60 ,70, 80, 90, 100},
+        //     {1, 2},
+        //     {9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9},
+        //     {5, 6, 7, 8},
+        //     {}
+        // };
+        // for (int i = 0; i < greedFactors.length; i++) {
+        //     int result = findContentChildren(greedFactors[i], cookieSizes[i]);
+        //     System.out.println((i + 1) + ".\tGreed factors: " + Arrays.toString(greedFactors[i]));
+        //     System.out.println("\tCookie sizes: " + Arrays.toString(cookieSizes[i]));
+        //     System.out.println("\n\tResult: " + result);
+        //     System.out.println(new String(new char[100]).replace('\0', '-'));
+        // }
 
+        // //8. Min Cost to Rearrange Fruits - https://leetcode.com/problems/rearranging-fruits/solutions/7030240/rearranging-fruits/
+        // int[][] basket1List = {
+        //     {4,1,3},
+        //     // {4, 2, 2, 2},
+        //     // {2, 3, 4, 1},
+        //     // {84, 80, 43, 8, 80, 88, 43, 14, 100, 88},
+        //     // {1, 2, 2, 3, 3, 4},
+        //     // {4, 4, 4, 4, 3}
+        // };
+        // int[][] basket2List = {
+        //     {4, 2, 3},
+        //     {1, 4, 1, 2},
+        //     {3, 2, 5, 1},
+        //     {32, 32, 42, 68, 68, 100, 42, 84, 14, 8},
+        //     {1, 1, 2, 3, 4, 4},
+        //     {5, 5, 5, 5, 3}
+        // };
+        // for (int i = 0; i < basket1List.length; i++) {
+        //     System.out.print((i + 1) + ".\t Basket 1 = " + Arrays.toString(basket1List[i]));
+        //     System.out.print("\n\t Basket 2 = " + Arrays.toString(basket2List[i]));
+        //     long result = minCostToRearrangeFruits(basket1List[i], basket2List[i]);
+        //     System.out.println("\n\n\t Minimum cost to rearrange fruits in the two baskets is " + result);
+        //     System.out.println(new String(new char[100]).replace('\0', '-'));
+        // }
+
+        // //9. Number of Steps to Reduce a Number to Zero
+        // List<String> strings = Arrays.asList(
+        //     "1011",
+        //     "111",
+        //     "100",
+        //     "1",
+        //     "10"
+        // );
+        // for (int i = 0; i < strings.size(); ++i) {
+        //     System.out.println((i + 1) + ".\tstr: " + strings.get(i));
+        //     System.out.println();
+        //     System.out.println("\tsteps: " + numSteps(strings.get(i)));
+        //     System.out.println(new String(new char[100]).replace("\0", "-"));
+        // }
     }  
 
     public boolean jumpGame(int[] nums) {
@@ -261,5 +323,67 @@ public class Greedy {
         return "";
     }
 
+    public static int findContentChildren(int[] greedFactors, int[] cookieSizes) {
+        Arrays.sort(greedFactors);
+        Arrays.sort(cookieSizes);
+        
+        int count = 0;
+        int i = 0, n = greedFactors.length;
+        int j = 0, m = cookieSizes.length;
+        while(i < n && j < m){
+            if(greedFactors[i] <= cookieSizes[j]){
+                count++;
+                i++;
+            }
+            j++;
+        }
+        return count;
+    }
 
+    public static long minCostToRearrangeFruits(int[] basket1, int[] basket2) {
+        Map<Integer, Integer> freq = new HashMap<>();
+        int min = Integer.MAX_VALUE;
+        for(var b1 : basket1){
+            min = Math.min(min, b1);
+            freq.put(b1, freq.getOrDefault(b1, 0)+1);
+        }
+        for(var b2 : basket2){
+            min = Math.min(min, b2);
+            freq.put(b2, freq.getOrDefault(b2, 0)-1);
+        }
+        
+        List<Integer> merge = new ArrayList<>();
+        
+        for(var entry : freq.entrySet()){
+            int count = entry.getValue();
+            
+            if(count % 2 != 0) return -1;
+            count /= 2;
+            for(int i = 0; i < count; i++){
+                merge.add(entry.getKey());
+            }
+        }
+        Collections.sort(merge);
+        int len = merge.size()/2;
+        long total = 0;
+        for(int i = 0; i < len; i++){
+            total += Math.min(2 * min, merge.get(i));
+        }
+        return total;
+    }
+
+    public static int numSteps (String str) {
+        int c = 0, total = 0;
+        for(int i = str.length()-1; i > 0 ; i--){
+            int digit = (str.charAt(i)-'0') + c;
+            if(digit % 2 == 0){
+                total += 1;
+            }
+            else{
+                total += 2;
+                c = 1;
+            }
+        }
+        return total + c;
+    }
 }
